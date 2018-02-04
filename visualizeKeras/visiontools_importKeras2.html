@@ -1,0 +1,323 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>visiontools_importKeras2</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-04"><meta name="DC.source" content="visiontools_importKeras2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compete with keras over vgg16 visualisation</a></li><li><a href="#2">Load VGG16</a></li><li><a href="#3">Visualise increasingly complexed layers</a></li><li><a href="#4">Visualize class nodes</a></li><li><a href="#5">So what have we learned?</a></li></ul></div><h2 id="1">Compete with keras over vgg16 visualisation</h2><p>Here I follow this blog (address below) which offers visualisation procedures for Keras. While I am greatful for it to show me the way, I am trying to see if matlab tools are better or easier to use.</p><pre class="codeinput"><span class="comment">%https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html</span>
+</pre><h2 id="2">Load VGG16</h2><p>Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight, they matched. I also imported keras' network to matlab and got the same classification as vgg16. You may want to try prove me wrong, but I am convinced that Matlab's net is what everybody uses with Python.</p><pre class="codeinput">net=vgg16;
+<span class="comment">% %% Visualise 4 filters for layer conv5_3</span>
+<span class="comment">% for filteri=1:4</span>
+<span class="comment">%     I = deepDreamImage(netm,30,filteri);</span>
+<span class="comment">%     conv5_3(1:size(I,1),1:size(I,2),1:3,filteri)=deprocess_image(I);</span>
+<span class="comment">% end</span>
+<span class="comment">% figure;</span>
+<span class="comment">% montage(conv5_3)</span>
+</pre><h2 id="3">Visualise increasingly complexed layers</h2><p>Here I follow the blog's outline, showing examples of the same layers, if not the same nodes. First I list which layers I want to visualise.</p><pre class="codeinput">convOnes=[2,7,12,19,26,30];
+<span class="comment">% Then I setup zoomout steps. For the first, simpler layers I want to</span>
+<span class="comment">% zoom-out a bit, otherwise I get a 3 by 3 pixel image per node. I do that</span>
+<span class="comment">%using 'PyramidLevels'. 7 pyramis levels are okay for a 3 by 3 node, but</span>
+<span class="comment">%not to large sets of weights. My Ubuntu laptop+GPU crash when trying such</span>
+<span class="comment">%a stunt. So I set the steps between 7 to 3.</span>
+pyramid=[7,6,5,4,3,3];
+figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
+<span class="keyword">for</span> layeri=1:length(convOnes)
+    clear <span class="string">convX_1</span>
+    <span class="keyword">for</span> filteri=1:4
+        I = deepDreamImage(net,convOnes(layeri),filteri,<span class="string">'verbose'</span>,false,<span class="string">'PyramidLevels'</span>,pyramid(layeri));
+        convX_1(1:size(I,1),1:size(I,2),1:3,filteri)=deprocess_image(I);
+    <span class="keyword">end</span>
+    subplot(2,3,layeri)
+    montage(convX_1);
+    title(strrep(net.Layers(convOnes(layeri)).Name,<span class="string">'_'</span>,<span class="string">'-'</span>))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="visiontools_importKeras2_01.png" alt=""> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66]
+figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
+<span class="keyword">for</span> nodei=1:4
+    I = deepDreamImage(net,39,19,<span class="string">'PyramidLevels'</span>,3,<span class="string">'PyramidScale'</span>,2);
+    I = deprocess_image(I);
+    subplot(2,2,nodei)
+    imshow(I)
+    title(net.Layers(41).ClassNames{nodes(nodei)})
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+nodes =
+
+    18    19    65    66
+
+|============================================|
+|    Pyramid   |  Iteration   |  Activation  |
+|     Level    |              |   Strength   |
+|============================================|
+|            1 |            1 |         0.13 |
+|            1 |            2 |         1.52 |
+|            1 |            3 |         1.62 |
+|            1 |            4 |         9.61 |
+|            1 |            5 |        17.05 |
+|            1 |            6 |        27.54 |
+|            1 |            7 |        35.62 |
+|            1 |            8 |        43.74 |
+|            1 |            9 |        51.45 |
+|            1 |           10 |        65.95 |
+|            2 |            1 |        13.86 |
+|            2 |            2 |        15.75 |
+|            2 |            3 |        29.21 |
+|            2 |            4 |        32.59 |
+|            2 |            5 |        34.82 |
+|            2 |            6 |        42.82 |
+|            2 |            7 |        41.34 |
+|            2 |            8 |        50.82 |
+|            2 |            9 |        52.23 |
+|            2 |           10 |        58.33 |
+|            3 |            1 |        12.41 |
+|            3 |            2 |        21.36 |
+|            3 |            3 |        26.05 |
+|            3 |            4 |        34.26 |
+|            3 |            5 |        34.26 |
+|            3 |            6 |        41.63 |
+|            3 |            7 |        49.37 |
+|            3 |            8 |        53.35 |
+|            3 |            9 |        58.08 |
+|            3 |           10 |        54.07 |
+|============================================|
+|============================================|
+|    Pyramid   |  Iteration   |  Activation  |
+|     Level    |              |   Strength   |
+|============================================|
+|            1 |            1 |         1.12 |
+|            1 |            2 |         0.34 |
+|            1 |            3 |         1.28 |
+|            1 |            4 |         9.56 |
+|            1 |            5 |        10.02 |
+|            1 |            6 |        21.28 |
+|            1 |            7 |        26.98 |
+|            1 |            8 |        46.43 |
+|            1 |            9 |        36.18 |
+|            1 |           10 |        58.68 |
+|            2 |            1 |         6.72 |
+|            2 |            2 |        14.04 |
+|            2 |            3 |        15.50 |
+|            2 |            4 |        23.60 |
+|            2 |            5 |        30.15 |
+|            2 |            6 |        30.30 |
+|            2 |            7 |        30.39 |
+|            2 |            8 |        45.35 |
+|            2 |            9 |        43.86 |
+|            2 |           10 |        48.31 |
+|            3 |            1 |        13.83 |
+|            3 |            2 |        24.05 |
+|            3 |            3 |        22.71 |
+|            3 |            4 |        26.69 |
+|            3 |            5 |        32.89 |
+|            3 |            6 |        38.81 |
+|            3 |            7 |        44.49 |
+|            3 |            8 |        48.08 |
+|            3 |            9 |        49.57 |
+|            3 |           10 |        53.00 |
+|============================================|
+|============================================|
+|    Pyramid   |  Iteration   |  Activation  |
+|     Level    |              |   Strength   |
+|============================================|
+|            1 |            1 |         0.70 |
+|            1 |            2 |         0.75 |
+|            1 |            3 |         3.39 |
+|            1 |            4 |        14.45 |
+|            1 |            5 |        18.29 |
+|            1 |            6 |        23.42 |
+|            1 |            7 |        40.91 |
+|            1 |            8 |        37.17 |
+|            1 |            9 |        65.69 |
+|            1 |           10 |        76.10 |
+|            2 |            1 |        10.93 |
+|            2 |            2 |        15.29 |
+|            2 |            3 |        21.00 |
+|            2 |            4 |        24.05 |
+|            2 |            5 |        32.54 |
+|            2 |            6 |        36.28 |
+|            2 |            7 |        36.75 |
+|            2 |            8 |        55.83 |
+|            2 |            9 |        48.53 |
+|            2 |           10 |        65.47 |
+|            3 |            1 |        12.79 |
+|            3 |            2 |        23.23 |
+|            3 |            3 |        27.81 |
+|            3 |            4 |        35.81 |
+|            3 |            5 |        36.63 |
+|            3 |            6 |        42.48 |
+|            3 |            7 |        45.72 |
+|            3 |            8 |        51.07 |
+|            3 |            9 |        60.59 |
+|            3 |           10 |        66.09 |
+|============================================|
+|============================================|
+|    Pyramid   |  Iteration   |  Activation  |
+|     Level    |              |   Strength   |
+|============================================|
+|            1 |            1 |         0.58 |
+|            1 |            2 |         1.04 |
+|            1 |            3 |         6.92 |
+|            1 |            4 |        15.88 |
+|            1 |            5 |        19.50 |
+|            1 |            6 |        33.41 |
+|            1 |            7 |        44.48 |
+|            1 |            8 |        67.14 |
+|            1 |            9 |        52.98 |
+|            1 |           10 |        46.08 |
+|            2 |            1 |        10.23 |
+|            2 |            2 |        19.22 |
+|            2 |            3 |        21.03 |
+|            2 |            4 |        26.63 |
+|            2 |            5 |        28.51 |
+|            2 |            6 |        44.68 |
+|            2 |            7 |        37.52 |
+|            2 |            8 |        44.09 |
+|            2 |            9 |        53.30 |
+|            2 |           10 |        50.67 |
+|            3 |            1 |        12.36 |
+|            3 |            2 |        20.65 |
+|            3 |            3 |        26.56 |
+|            3 |            4 |        32.07 |
+|            3 |            5 |        34.09 |
+|            3 |            6 |        40.37 |
+|            3 |            7 |        46.43 |
+|            3 |            8 |        49.11 |
+|            3 |            9 |        56.04 |
+|            3 |           10 |        60.33 |
+|============================================|
+</pre><img vspace="5" hspace="5" src="visiontools_importKeras2_02.png" alt=""> <h2 id="5">So what have we learned?</h2><p>I do not work for Matlab, but their visualizetion tool is cool and helpful. Matlab is not the best option now for deep-learning for a few reasons, perhaps mainly because it is not free and the options are still limited. However if you want to use the most popular pretrained nets, or the most common net types (such as Faster R-CNN) then Matlab has its advantages - fewer lines of code and easy visualisation. As for how AI sees the world - I think it sees birds and snakes pretty well as we do, with the main difference that for CNN it doesn't matter so much how the beak connects to the feathers. However, when nodes have to be sensitive for different kinds of birds and different categories altogether, you should expect distinguishing features to show up, and not necessarily an image of the class architype.</p><pre class="codeinput">disp(<span class="string">'bye bye'</span>)
+</pre><pre class="codeoutput">bye bye
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compete with keras over vgg16 visualisation
+% Here I follow this blog (address below) which offers visualisation procedures for Keras.
+% While I am greatful for it to show me the way, I am trying to see if
+% matlab tools are better or easier to use.
+%https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html
+%% Load VGG16
+% Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight,
+% they matched. I also imported keras' network to matlab and got the same
+% classification as vgg16. You may want to try prove me wrong, but I am
+% convinced that Matlab's net is what everybody uses with Python.
+net=vgg16;
+% %% Visualise 4 filters for layer conv5_3
+% for filteri=1:4
+%     I = deepDreamImage(netm,30,filteri);
+%     conv5_3(1:size(I,1),1:size(I,2),1:3,filteri)=deprocess_image(I);
+% end
+% figure;
+% montage(conv5_3)
+%% Visualise increasingly complexed layers
+% Here I follow the blog's outline, showing examples of the same layers, if not the
+% same nodes. First I list which layers I want to visualise.
+convOnes=[2,7,12,19,26,30];
+% Then I setup zoomout steps. For the first, simpler layers I want to
+% zoom-out a bit, otherwise I get a 3 by 3 pixel image per node. I do that 
+%using 'PyramidLevels'. 7 pyramis levels are okay for a 3 by 3 node, but
+%not to large sets of weights. My Ubuntu laptop+GPU crash when trying such
+%a stunt. So I set the steps between 7 to 3.
+pyramid=[7,6,5,4,3,3];
+figure('units','normalized','outerposition',[0 0 1 1])
+for layeri=1:length(convOnes)
+    clear convX_1
+    for filteri=1:4
+        I = deepDreamImage(net,convOnes(layeri),filteri,'verbose',false,'PyramidLevels',pyramid(layeri));
+        convX_1(1:size(I,1),1:size(I,2),1:3,filteri)=deprocess_image(I);
+    end
+    subplot(2,3,layeri)
+    montage(convX_1);
+    title(strrep(net.Layers(convOnes(layeri)).Name,'_','-'))
+end
+%% Visualize class nodes
+% The blog shows not so birdy magpie and a not so snaky sea snake. Since
+% matlab and python do not start from the same index I accidentally
+% visualised Green Mamba and Jay. Let's look at all four
+nodes=[18,19,65,66]
+figure('units','normalized','outerposition',[0 0 1 1])
+for nodei=1:4
+    I = deepDreamImage(net,39,19,'PyramidLevels',3,'PyramidScale',2);
+    I = deprocess_image(I);
+    subplot(2,2,nodei)
+    imshow(I)
+    title(net.Layers(41).ClassNames{nodes(nodei)})
+end
+
+%% So what have we learned?
+% I do not work for Matlab, but their visualizetion tool is cool and
+% helpful. Matlab is not the best option now for deep-learning for a few
+% reasons, perhaps mainly because it is not free and the options are still
+% limited. However if you want to use the most popular pretrained nets, or
+% the most common net types (such as Faster R-CNN) then Matlab has its
+% advantages - fewer lines of code and easy visualisation. As for how
+% AI sees the world - I think it sees birds and snakes pretty well as we
+% do, with the main difference that for CNN it doesn't matter so much how
+% the beak connects to the feathers. However, when nodes have to be
+% sensitive for different kinds of birds and different categories
+% altogether, you should expect distinguishing features to show up, and not
+% necessarily an image of the class architype.
+disp('bye bye')
+
+##### SOURCE END #####
+--></body></html>
