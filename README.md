@@ -1,7 +1,7 @@
 ## Welcome Welcome
 Here I need just [one link](https://github.com/yuval-harpaz/cnn-with-Matlab/blob/master/visualizeKeras/visiontools_importKeras2.html)
 Visualise stuff with Matlab [link2](https://github.com/yuval-harpaz/cnn-with-Matlab/blob/master/visualizeKeras/visiontools_importKeras2.html)
-[link 3](https://github.com/yuval-harpaz/cnn-with-Matlab/blob/gh-pages/visualizeKeras/visiontools_importKeras2.html)
+[link 3](https://yuval-harpaz.github.io/cnn-with-Matlab/visualizeKeras/visiontools_importKeras2.html)
 You can use the [editor on GitHub](https://github.com/yuval-harpaz/cnn-with-Matlab/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
