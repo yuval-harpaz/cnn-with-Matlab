@@ -66,15 +66,22 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compete with keras over vgg16 visualisation</a></li>
   <li><a href="#2">Load VGG16</a></li><li><a href="#3">Visualise increasingly complexed layers</a></li><li><a href="#4">Visualize class nodes</a>
   </li><li><a href="#5">So what have we learned?</a></li></ul></div><h2 id="1">Compete with keras over vgg16 visualisation</h2>
-  <p>Here I am following this <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> which explains how CNN sees the world. blog which offers visualisation procedures for Keras. While I am greatful for it to show me the way, I am trying to see if matlab tools are better or easier to use.
+  <p>Here I am following this <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
+  which explains how CNN sees the world, while refering to vgg16 net using Keras python tools.
+   While I am grateful for it to show me the way, I am trying to see if matlab tools are better or easier to use.
+ Before we start, as for now I work with Matlab 2017b on Ubuntu 16.04 on a Lenovo laptop that has a GPU. Without GPU processing is done on CPU, which takes ages.  
 
 </pre><h2 id="2">Load VGG16</h2><p>Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight, they matched. I also imported keras' network to matlab and got the same classification as vgg16. You may want to try prove me wrong, but I am convinced that Matlab's net is what everybody uses with Python.</p><pre class="codeinput">net=vgg16;
 </pre><h2 id="3">Visualise increasingly complex layers</h2><p>
 Here I follow the blog's outline, showing examples of the same layers, if not the same nodes.
- First I list which layers I want to visualise (convOnes in the code below). Then I set zoom-out steps. 
- For the first, simpler layers, I want to zoom-out a bit, otherwise I get a 3 by 3 pixel image per node. I do that
+ First I list which layers I want to visualize (convOnes in the code below). Then I set zoom-out steps. 
+ For the first, simpler layers, I want to zoom-out a bit, otherwise I get a 3 by 3 pixel images. I do that
 using 'PyramidLevels'. 7 pyramid levels are okay for a 3 by 3 node, but not to large sets of weights.
- My Ubuntu laptop+GPU crashed when trying such a stunt. So I set the steps between 7 to 3 according to filter size.
+ My laptop+GPU crashed when trying such a stunt. So I set the steps between 7 to 3 according to filter size.
+ If you are very new to this, what happens here is that we take a pseudo-random image and tweak it a bit in order to increase the weights of the node we want to examine.
+ By this we see what sort of pictures bring the most out of this node. See some links with better explanations below. Or in other words, we create what the computer imagines when we tickle one of its neurons.
+ One more thing, resulting images tend to be pale, or in other words, some dots take most of color intensity. So it is common to normalize these images.
+ Here I adapted <a href="https://github.com/yuval-harpaz/cnn-with-Matlab/blob/gh-pages/matlab/deprocessImage.m">deprocessImage</a>  from the keras blog.
 </p><pre class="codeinput">
 convOnes=[2,7,12,19,26,30];
 pyramid=[7,6,5,4,3,3];
