@@ -83,7 +83,7 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
     clear <span class="string">convX_1</span>
     <span class="keyword">for</span> filteri=1:4
         I = deepDreamImage(net,convOnes(layeri),filteri,<span class="string">'verbose'</span>,false,<span class="string">'PyramidLevels'</span>,pyramid(layeri));
-        convX_1(1:size(I,1),1:size(I,2),1:3,filteri)=deprocessImage(I);
+        convX_1(1:size(I,1),1:size(I,2),1:3,filteri)=deprocess_image(I);
     <span class="keyword">end</span>
     subplot(2,3,layeri)
     montage(convX_1);
@@ -93,7 +93,7 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
 figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
 <span class="keyword">for</span> nodei=1:4;
     I = deepDreamImage(net,39,19,<span class="string">'PyramidLevels'</span>,3,<span class="string">'PyramidScale'</span>,2);
-    I = deprocessImage(I);
+    I = deprocess_image(I);
     subplot(2,2,nodei)
     imshow(I)
     title(net.Layers(41).ClassNames{nodes(nodei)})
