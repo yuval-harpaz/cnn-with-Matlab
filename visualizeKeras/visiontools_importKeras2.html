@@ -121,23 +121,43 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
 |============================================|
 
 </pre><img vspace="5" hspace="5" src="visiontools_importKeras2_02.png" alt="">
- <h2 id="5">So what have we learned?</h2>
- <p>I do not work for Matlab, but their visualizetion tool is cool and helpful. 
- Matlab is not the best option now for deep-learning for a few reasons, 
- perhaps mainly because it is not free and the options are still limited. 
-However if you want to use the most popular pretrained nets, 
-or the most common net types (such as Faster R-CNN) then Matlab has its 
-advantages - fewer lines of code and easy visualisation. 
-As for how AI sees the world - I think it sees birds and snakes pretty well as we do, 
-with the main difference that for CNN it doesn't matter so much how the beak connects to the feathers 
-(although <a href="https://raghakot.github.io/keras-vis/"> this</a> toolkit yields well connected bird pieces). 
-However, when nodes have to be sensitive for different kinds of birds and different categories altogether, 
-you should expect distinguishing features to show up, and not necessarily an image of the class architype.</p>
+Well, magpie is nothing but feathers, but this may be because I used deepDreamImage default 10 iterations. With 100 iterations you get this:
+ <img src="matlabMagpie.png">
+ <h2 id="5">keras-vis</h2>
+ <p> 
+I then found that  <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a> toolkit yields nice images. Here is an example they give </p>
  <img src="https://raw.githubusercontent.com/raghakot/keras-vis/master/images/dense_vis/cover.png?raw=true" alt="Bird from keras-vis">
  <br>keras-vis toolkit example
+ <br> <br> <br> <br>
+ <img src="matlabOuzel.png">
  <br>
- <br>
- <br> other links:
+ <br>And here is Matlab's image for the same class. again, I used 100 iterations to get the birds. keras-vis does 200 by default.
+ <br> <br>
+ So are they good or do they give their best example and fail elsewhere? Here is keras-vis images I generated for the sea-snake and the magpie.<br> 
+ <img src="kerasvis18.png"> <img src="kerasvis65.png"> <br> 
+ keras-vis' magpie and sea-snake
+ <br> 
+ <img src="http://otlibrary.com/wp-content/gallery/black-banded-sea-krait/RSCFT0665_Laticauda_semifasciata.jpg" alt="Bird from keras-vis">
+ <br> 
+ And this is just a sea snake, in case you wondered
+  <br>  <br> 
+<h2 id="5">So what have we learned?</h2>
+ <p>I do not work for Matlab, but their vitalization tool is excellent.  
+ Matlab is not the best option now for deep-learning for a few reasons, 
+ perhaps mainly because it is not free and the options are still limited. 
+ For example, keras-vis offers guided saliency maps and other features that Matlab, to my knowledgestill don't have.
+However if you want to use the most popular pretrained nets, 
+or the most common net types (such as Faster R-CNN) then Matlab has its 
+advantages - fewer lines of code, and you don't have to strugle half a day to install modules. 
+As for how machines see the world - I think it sees birds and snakes similarly to humans. Perhaps 
+for CNN it doesn't matter so much how the beak connects to the feathers as long as you have all the features in the image. 
+In any case, if the class of a bird looks nothing like a bird, or bird parts at least, you have to rise an eyebrow and see whether the net can really detect them.  
+We should also remember that the above nodes have to be sensitive for different kinds of birds and different categories altogether, 
+you should expect distinguishing features to show up, and not necessarily an image of the class archetype.</p> 
+ 
+  <br> <br> <br>
+  links:
+ <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a>
   <br> <a href="https://github.com/philipperemy/keras-visualize-activations"> keras-visualize-activations</a>  - a tool to visualize filters activation 
  <br> <a href=" https://jacobgil.github.io/deeplearning/filter-visualizations"> filter-visualization</a> - an enlightening explanation about the matter
  
