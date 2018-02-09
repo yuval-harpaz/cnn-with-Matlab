@@ -13,7 +13,7 @@ html { min-height:100%; margin-bottom:1px; }
 html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
 html body td { vertical-align:top; text-align:left; }
 
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2em; color:#000; line-height:100%; font-weight:normal; }
 h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
 h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
 
@@ -62,26 +62,36 @@ span.syscmd { color:#B28C00 }
 table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
 table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
 
+  </style>
+  </head>
+  <body>
+  <div class="content">
+  <h1>Comparing Matlab and Keras tools for visualising CNN</h1>
+  <p>Here I am following Francois Chollet's <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
+  which explains how CNN sees the world, exploring vgg16 net using Keras (python) tools. There are some cool visualizations of nodes at different levels of the network, but the bottom line is that one should not expect machines to view the world as we do.
+  When visualizing magpie and sea-snake nodes the result is not compatible with human perception. Can you tell which one is the sea snake?
+  <br>
+  <img src="https://blog.keras.io/img/magpie.jpg" alt="blog magpie">
+    <img src="https://blog.keras.io/img/seasnake.jpg" alt="blog magpie">
+  <br>
+  
+   As a Matlab user I saw they produce great images for deep learning nodes 
+   (see <a href="https://www.mathworks.com/help/nnet/examples/deep-dream-images-using-alexnet.html">here</a> AlexNet visualisation), 
+   so I thought to check whether we can, with other tools, get better picture of how computers see the world.
+ As for now I work with Matlab 2017b on Ubuntu 16.04 on a Lenovo laptop that has a GPU. Without GPU, processing is done on CPU which takes ages.  
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compete with keras over vgg16 visualisation</a></li>
-  <li><a href="#2">Load VGG16</a></li><li><a href="#3">Visualise increasingly complexed layers</a></li><li><a href="#4">Visualize class nodes</a>
-  </li><li><a href="#5">So what have we learned?</a></li></ul></div><h2 id="1">Compete with keras over vgg16 visualisation</h2>
-  <p>Here I am following this <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
-  which explains how CNN sees the world, while refering to vgg16 net using Keras python tools.
-   While I am grateful for it to show me the way, I am trying to see if matlab tools are better or easier to use.
- Before we start, as for now I work with Matlab 2017b on Ubuntu 16.04 on a Lenovo laptop that has a GPU. Without GPU processing is done on CPU, which takes ages.  
-
-</pre><h2 id="2">Load VGG16</h2><p>Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight, they matched. I also imported keras' network to matlab and got the same classification as vgg16. You may want to try prove me wrong, but I am convinced that Matlab's net is what everybody uses with Python.</p><pre class="codeinput">net=vgg16;
+</pre><h2 id="2">Load VGG16</h2>
+<p>Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight, they matched. I also imported keras' network to matlab and got the same classification as native vgg16. You may want to try prove me wrong, but I am convinced that Matlab's net is what everybody uses with Python.</p><pre class="codeinput">net=vgg16;
 </pre><h2 id="3">Visualise increasingly complex layers</h2><p>
-Here I follow the blog's outline, showing examples of the same layers, if not the same nodes.
+Here I follow the blog's outline, showing examples of the same layers, but not the same nodes (I show filter 1 to 4).
  First I list which layers I want to visualize (convOnes in the code below). Then I set zoom-out steps. 
- For the first, simpler layers, I want to zoom-out a bit, otherwise I get a 3 by 3 pixel images. I do that
-using 'PyramidLevels'. 7 pyramid levels are okay for a 3 by 3 node, but not to large sets of weights.
+ For the first, simpler layers, I want to zoom-out a bit, otherwise I get 3 by 3 pixel images. I do that
+using 'PyramidLevels'. 7 pyramid levels are okay for a 3 by 3 node, but not for large sets of weights.
  My laptop+GPU crashed when trying such a stunt. So I set the steps between 7 to 3 according to filter size.
  If you are very new to this, what happens here is that we take a pseudo-random image and tweak it a bit in order to increase the weights of the node we want to examine.
  By this we see what sort of pictures bring the most out of this node. See some links with better explanations below. Or in other words, we create what the computer imagines when we tickle one of its neurons.
  One more thing, resulting images tend to be pale, or in other words, some dots take most of color intensity. So it is common to normalize these images.
- Here I adapted <a href="https://github.com/yuval-harpaz/cnn-with-Matlab/blob/gh-pages/matlab/deprocessImage.m">deprocessImage</a>  from the keras blog.
+ Here I adapted <a href="https://github.com/yuval-harpaz/cnn-with-Matlab/blob/master/matlab/deprocessImage.m">deprocessImage</a>  from the keras blog.
 </p><pre class="codeinput">
 convOnes=[2,7,12,19,26,30];
 pyramid=[7,6,5,4,3,3];
@@ -96,7 +106,7 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
     montage(convX_1);
     title(strrep(net.Layers(convOnes(layeri)).Name,<span class="string">'_'</span>,<span class="string">'-'</span>))
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="visiontools_01.png" alt=""> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
+</pre><img vspace="5" hspace="5" src="visiontools1_01.png" alt="conv filters"> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
 figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
 <span class="keyword">for</span> nodei=1:4;
     I = deepDreamImage(net,39,19,<span class="string">'PyramidLevels'</span>,3,<span class="string">'PyramidScale'</span>,2);
@@ -120,47 +130,52 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
 |            3 |           10 |        54.07 |
 |============================================|
 
-</pre><img vspace="5" hspace="5" src="visiontools_02.<img src="visiontools1.png" alt="" />png" alt="">
-Well, magpie is nothing but feathers, but this may be because I used deepDreamImage default 10 iterations. With 100 iterations you get this:
- <img src="matlabMagpie.png">
+</pre><img vspace="5" hspace="5" src="visiontools1_02.png" alt=" class nodes ">
+ <br>
+  <br>Well, magpie is nothing but feathers, but this may be because I used deepDreamImage default 10 iterations. With 100 iterations you get this:
+ <br> <img src="matlabMagpie.png">
  <h2 id="5">keras-vis</h2>
  <p> 
 I then found that  <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a> toolkit yields nice images. Here is an example they give </p>
  <img src="https://raw.githubusercontent.com/raghakot/keras-vis/master/images/dense_vis/cover.png?raw=true" alt="Bird from keras-vis">
  <br>keras-vis toolkit example
  <br> <br> <br> <br>
- <img src="matlabOuzel.png">
- <br>
  <br>And here is Matlab's image for the same class. again, I used 100 iterations to get the birds. keras-vis does 200 by default.
+  <br><img src="matlabOuzel.png">
+ <br>
+ 
  <br> <br>
  So are they good or do they give their best example and fail elsewhere? Here is keras-vis images I generated for the sea-snake and the magpie.<br> 
  <img src="kerasvis18.png"> <img src="kerasvis65.png"> <br> 
  keras-vis' magpie and sea-snake
  <br> 
+ <br> <br> <br> <br>
  <img src="http://otlibrary.com/wp-content/gallery/black-banded-sea-krait/RSCFT0665_Laticauda_semifasciata.jpg" alt="Bird from keras-vis">
  <br> 
  And this is just a sea snake, in case you wondered
   <br>  <br> 
 <h2 id="5">So what have we learned?</h2>
- <p>I do not work for Matlab, but their vitalization tool is excellent.  
+ <p>Well, it does seem that keras-vis show a nice example (node 20) which competes with Matlab well, but for other nodes they did not do as good. 
+ But I only tried one go, without increasing N iterations etc. So I say Matlab won by points this round.
+ Note however that keras-vis offers other important tools such as saliency maps, which Matlab still doesn't offer. Another point is that keras-vis used very little of my GPU, so when no GPU is available, keras-vis is much quicker. 
  Matlab is not the best option now for deep-learning for a few reasons, 
- perhaps mainly because it is not free and the options are still limited. 
- For example, keras-vis offers guided saliency maps and other features that Matlab, to my knowledgestill don't have.
-However if you want to use the most popular pretrained nets, 
-or the most common net types (such as Faster R-CNN) then Matlab has its 
-advantages - fewer lines of code, and you don't have to strugle half a day to install modules. 
-As for how machines see the world - I think it sees birds and snakes similarly to humans. Perhaps 
+ perhaps mainly because it is not free and because options are still limited. 
+ 
+However, it seems that someone there is working hard to close the gap. I hope they do. If you want to use the most popular pretrained nets, 
+or the most common net types (such as Faster R-CNN) then Matlab has its advantages - fewer lines of code, and you don't have to straggle half a day to install modules. 
+As for how machines see the world - I think it sees birds and snakes similarly to humans, recognize feathers and beaks. Perhaps 
 for CNN it doesn't matter so much how the beak connects to the feathers as long as you have all the features in the image. 
-In any case, if the class of a bird looks nothing like a bird, or bird parts at least, you have to rise an eyebrow and see whether the net can really detect them.  
-We should also remember that the above nodes have to be sensitive for different kinds of birds and different categories altogether, 
-you should expect distinguishing features to show up, and not necessarily an image of the class archetype.</p> 
+In any case, if the class of a bird in your trained network looks nothing like a bird, or bird parts at least, you have to rise an eyebrow and see whether the net can really detect them.  
+We should also remember that VGG16 has to be sensitive for different kinds of birds and different categories altogether, 
+so perhaps we should expect distinguishing features to show up, and not necessarily an image of the class archetype.</p> 
  
   <br> <br> <br>
   links:
- <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a>
+  <br>Francois Chollet's <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
+<br> <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a>
   <br> <a href="https://github.com/philipperemy/keras-visualize-activations"> keras-visualize-activations</a>  - a tool to visualize filters activation 
  <br> <a href=" https://jacobgil.github.io/deeplearning/filter-visualizations"> filter-visualization</a> - an enlightening explanation about the matter
- 
+ <br>
 <pre class="codeinput">disp(<span class="string">'bye bye'</span>)
 </pre><pre class="codeoutput">bye bye
-</pre><p class="footer"><br>haha<br></p></div>
+</pre><p class="footer"><br><br></p></div>
