@@ -96,7 +96,7 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
     montage(convX_1);
     title(strrep(net.Layers(convOnes(layeri)).Name,<span class="string">'_'</span>,<span class="string">'-'</span>))
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="visiontools_importKeras2_01.png" alt=""> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
+</pre><img vspace="5" hspace="5" src="visiontools_01.png" alt=""> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
 figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
 <span class="keyword">for</span> nodei=1:4;
     I = deepDreamImage(net,39,19,<span class="string">'PyramidLevels'</span>,3,<span class="string">'PyramidScale'</span>,2);
@@ -120,7 +120,7 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
 |            3 |           10 |        54.07 |
 |============================================|
 
-</pre><img vspace="5" hspace="5" src="visiontools_importKeras2_02.png" alt="">
+</pre><img vspace="5" hspace="5" src="visiontools_02.<img src="visiontools1.png" alt="" />png" alt="">
 Well, magpie is nothing but feathers, but this may be because I used deepDreamImage default 10 iterations. With 100 iterations you get this:
  <img src="matlabMagpie.png">
  <h2 id="5">keras-vis</h2>
