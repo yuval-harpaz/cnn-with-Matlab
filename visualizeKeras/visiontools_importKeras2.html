@@ -1,0 +1,166 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>visiontools_importKeras2</title><meta name="generator" content="Bluefish 2.2.7" ><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-04"><meta name="DC.source" content="visiontools_importKeras2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compete with keras over vgg16 visualisation</a></li>
+  <li><a href="#2">Load VGG16</a></li><li><a href="#3">Visualise increasingly complexed layers</a></li><li><a href="#4">Visualize class nodes</a>
+  </li><li><a href="#5">So what have we learned?</a></li></ul></div><h2 id="1">Compete with keras over vgg16 visualisation</h2>
+  <p>Here I am following this <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
+  which explains how CNN sees the world, while refering to vgg16 net using Keras python tools.
+   While I am grateful for it to show me the way, I am trying to see if matlab tools are better or easier to use.
+ Before we start, as for now I work with Matlab 2017b on Ubuntu 16.04 on a Lenovo laptop that has a GPU. Without GPU processing is done on CPU, which takes ages.  
+
+</pre><h2 id="2">Load VGG16</h2><p>Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight, they matched. I also imported keras' network to matlab and got the same classification as vgg16. You may want to try prove me wrong, but I am convinced that Matlab's net is what everybody uses with Python.</p><pre class="codeinput">net=vgg16;
+</pre><h2 id="3">Visualise increasingly complex layers</h2><p>
+Here I follow the blog's outline, showing examples of the same layers, if not the same nodes.
+ First I list which layers I want to visualize (convOnes in the code below). Then I set zoom-out steps. 
+ For the first, simpler layers, I want to zoom-out a bit, otherwise I get a 3 by 3 pixel images. I do that
+using 'PyramidLevels'. 7 pyramid levels are okay for a 3 by 3 node, but not to large sets of weights.
+ My laptop+GPU crashed when trying such a stunt. So I set the steps between 7 to 3 according to filter size.
+ If you are very new to this, what happens here is that we take a pseudo-random image and tweak it a bit in order to increase the weights of the node we want to examine.
+ By this we see what sort of pictures bring the most out of this node. See some links with better explanations below. Or in other words, we create what the computer imagines when we tickle one of its neurons.
+ One more thing, resulting images tend to be pale, or in other words, some dots take most of color intensity. So it is common to normalize these images.
+ Here I adapted <a href="https://github.com/yuval-harpaz/cnn-with-Matlab/blob/gh-pages/matlab/deprocessImage.m">deprocessImage</a>  from the keras blog.
+</p><pre class="codeinput">
+convOnes=[2,7,12,19,26,30];
+pyramid=[7,6,5,4,3,3];
+figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
+<span class="keyword">for</span> layeri=1:length(convOnes)
+    clear <span class="string">convX_1</span>
+    <span class="keyword">for</span> filteri=1:4
+        I = deepDreamImage(net,convOnes(layeri),filteri,<span class="string">'verbose'</span>,false,<span class="string">'PyramidLevels'</span>,pyramid(layeri));
+        convX_1(1:size(I,1),1:size(I,2),1:3,filteri)=deprocessImage(I);
+    <span class="keyword">end</span>
+    subplot(2,3,layeri)
+    montage(convX_1);
+    title(strrep(net.Layers(convOnes(layeri)).Name,<span class="string">'_'</span>,<span class="string">'-'</span>))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="visiontools_importKeras2_01.png" alt=""> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
+figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
+<span class="keyword">for</span> nodei=1:4;
+    I = deepDreamImage(net,39,19,<span class="string">'PyramidLevels'</span>,3,<span class="string">'PyramidScale'</span>,2);
+    I = deprocessImage(I);
+    subplot(2,2,nodei)
+    imshow(I)
+    title(net.Layers(41).ClassNames{nodes(nodei)})
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+
+|============================================|
+|    Pyramid   |  Iteration   |  Activation  |
+|     Level    |              |   Strength   |
+|============================================|
+|            1 |            1 |         0.13 |
+|            1 |            2 |         1.52 |
+															
+			...
+
+|            3 |            9 |        58.08 |
+|            3 |           10 |        54.07 |
+|============================================|
+
+</pre><img vspace="5" hspace="5" src="visiontools_importKeras2_02.png" alt="">
+Well, magpie is nothing but feathers, but this may be because I used deepDreamImage default 10 iterations. With 100 iterations you get this:
+ <img src="matlabMagpie.png">
+ <h2 id="5">keras-vis</h2>
+ <p> 
+I then found that  <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a> toolkit yields nice images. Here is an example they give </p>
+ <img src="https://raw.githubusercontent.com/raghakot/keras-vis/master/images/dense_vis/cover.png?raw=true" alt="Bird from keras-vis">
+ <br>keras-vis toolkit example
+ <br> <br> <br> <br>
+ <img src="matlabOuzel.png">
+ <br>
+ <br>And here is Matlab's image for the same class. again, I used 100 iterations to get the birds. keras-vis does 200 by default.
+ <br> <br>
+ So are they good or do they give their best example and fail elsewhere? Here is keras-vis images I generated for the sea-snake and the magpie.<br> 
+ <img src="kerasvis18.png"> <img src="kerasvis65.png"> <br> 
+ keras-vis' magpie and sea-snake
+ <br> 
+ <img src="http://otlibrary.com/wp-content/gallery/black-banded-sea-krait/RSCFT0665_Laticauda_semifasciata.jpg" alt="Bird from keras-vis">
+ <br> 
+ And this is just a sea snake, in case you wondered
+  <br>  <br> 
+<h2 id="5">So what have we learned?</h2>
+ <p>I do not work for Matlab, but their vitalization tool is excellent.  
+ Matlab is not the best option now for deep-learning for a few reasons, 
+ perhaps mainly because it is not free and the options are still limited. 
+ For example, keras-vis offers guided saliency maps and other features that Matlab, to my knowledgestill don't have.
+However if you want to use the most popular pretrained nets, 
+or the most common net types (such as Faster R-CNN) then Matlab has its 
+advantages - fewer lines of code, and you don't have to strugle half a day to install modules. 
+As for how machines see the world - I think it sees birds and snakes similarly to humans. Perhaps 
+for CNN it doesn't matter so much how the beak connects to the feathers as long as you have all the features in the image. 
+In any case, if the class of a bird looks nothing like a bird, or bird parts at least, you have to rise an eyebrow and see whether the net can really detect them.  
+We should also remember that the above nodes have to be sensitive for different kinds of birds and different categories altogether, 
+you should expect distinguishing features to show up, and not necessarily an image of the class archetype.</p> 
+ 
+  <br> <br> <br>
+  links:
+ <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a>
+  <br> <a href="https://github.com/philipperemy/keras-visualize-activations"> keras-visualize-activations</a>  - a tool to visualize filters activation 
+ <br> <a href=" https://jacobgil.github.io/deeplearning/filter-visualizations"> filter-visualization</a> - an enlightening explanation about the matter
+ 
+<pre class="codeinput">disp(<span class="string">'bye bye'</span>)
+</pre><pre class="codeoutput">bye bye
+</pre><p class="footer"><br>haha<br></p></div>
