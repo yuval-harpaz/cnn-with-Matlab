@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </head>
   <body>
   <div class="content">
-  <h1>Comparing Matlab and Keras tools for visualising CNN</h1>
+  <h1>Comparing Matlab and Keras tools for visualizing CNN</h1>
   <p>Here I am following Francois Chollet's <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
   which explains how Convulsional Neural Networks (CNN) see the world, exploring vgg16 net using Keras (python) tools. There are some cool visualizations of nodes at different levels of the network, but the bottom line is that one should not expect machines to view the world as we do.
   When visualizing magpie and sea-snake nodes the result is not compatible with human perception. Can you tell which one is the sea snake?
@@ -76,13 +76,13 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   <br>
   
    As a Matlab user I saw great images produceed by Matlab team for deep learning nodes 
-   (see <a href="https://www.mathworks.com/help/nnet/examples/deep-dream-images-using-alexnet.html">here</a> AlexNet visualisation), 
+   (see <a href="https://www.mathworks.com/help/nnet/examples/deep-dream-images-using-alexnet.html">here</a> AlexNet vitalization), 
    so I thought to check whether we can after all get better picture of how computers see the world.
  As for now I work with Matlab 2017b on Ubuntu 16.04 on a Lenovo laptop that has a GPU. Without GPU, processing is done on CPU which takes ages.  
 
 </pre><h2 id="2">Load VGG16</h2>
 <p>Matlab's vgg16 add-on is the same VGG16 used by blog.keras, I checked every single weight, they matched. I also imported keras' network to matlab and got the same classification as native vgg16. You may want to try prove me wrong, but I am convinced that Matlab's net is what everybody uses with Python.</p><pre class="codeinput">net=vgg16;
-</pre><h2 id="3">Visualise increasingly complex layers</h2><p>
+</pre><h2 id="3">Visualize increasingly complex layers</h2><p>
 Here I follow the blog's outline, showing examples of the same layers, but not the same nodes (I show filter 1 to 4).
  First I list which layers I want to visualize (convOnes in the code below). Then I set zoom-out steps. 
  For the first, simpler layers, I want to zoom-out a bit, otherwise I get 3 by 3 pixel images. I do that
@@ -106,7 +106,7 @@ figure(<span class="string">'units'</span>,<span class="string">'normalized'</sp
     montage(convX_1);
     title(strrep(net.Layers(convOnes(layeri)).Name,<span class="string">'_'</span>,<span class="string">'-'</span>))
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="visiontools1_01.png" alt="conv filters"> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally visualised Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
+</pre><img vspace="5" hspace="5" src="visiontools1_01.png" alt="conv filters"> <h2 id="4">Visualize class nodes</h2><p>The blog shows not so birdy magpie and a not so snaky sea snake. Since matlab and python do not start from the same index I accidentally sexualized Green Mamba and Jay. Let's look at all four</p><pre class="codeinput">nodes=[18,19,65,66];
 figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
 <span class="keyword">for</span> nodei=1:4;
     I = deepDreamImage(net,39,19,<span class="string">'PyramidLevels'</span>,3,<span class="string">'PyramidScale'</span>,2);
