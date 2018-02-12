@@ -13,7 +13,7 @@ html { min-height:100%; margin-bottom:1px; }
 html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
 html body td { vertical-align:top; text-align:left; }
 
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2em; color:#000; line-height:100%; font-weight:normal; }
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2em; color:rgb(104, 56, 125); line-height:100%; font-weight:normal; }
 h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
 h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
 
@@ -68,16 +68,16 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   <div class="content">
   <h1>Comparing Matlab and Keras tools for visualising CNN</h1>
   <p>Here I am following Francois Chollet's <a href="https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html">blog</a> 
-  which explains how CNN sees the world, exploring vgg16 net using Keras (python) tools. There are some cool visualizations of nodes at different levels of the network, but the bottom line is that one should not expect machines to view the world as we do.
+  which explains how Convulsional Neural Networks (CNN) see the world, exploring vgg16 net using Keras (python) tools. There are some cool visualizations of nodes at different levels of the network, but the bottom line is that one should not expect machines to view the world as we do.
   When visualizing magpie and sea-snake nodes the result is not compatible with human perception. Can you tell which one is the sea snake?
   <br>
   <img src="https://blog.keras.io/img/magpie.jpg" alt="blog magpie">
     <img src="https://blog.keras.io/img/seasnake.jpg" alt="blog magpie">
   <br>
   
-   As a Matlab user I saw they produce great images for deep learning nodes 
+   As a Matlab user I saw great images produceed by Matlab team for deep learning nodes 
    (see <a href="https://www.mathworks.com/help/nnet/examples/deep-dream-images-using-alexnet.html">here</a> AlexNet visualisation), 
-   so I thought to check whether we can, with other tools, get better picture of how computers see the world.
+   so I thought to check whether we can after all get better picture of how computers see the world.
  As for now I work with Matlab 2017b on Ubuntu 16.04 on a Lenovo laptop that has a GPU. Without GPU, processing is done on CPU which takes ages.  
 
 </pre><h2 id="2">Load VGG16</h2>
@@ -156,14 +156,17 @@ I then found that  <a href="https://raghakot.github.io/keras-vis/"> keras-vis</a
   <br>  <br> 
 <h2 id="5">So what have we learned?</h2>
  <p>Well, it does seem that keras-vis show a nice example (node 20) which competes with Matlab well, but for other nodes they did not do as good. 
- But I only tried one go, without increasing N iterations etc. So I say Matlab won by points this round.
- Note however that keras-vis offers other important tools such as saliency maps, which Matlab still doesn't offer. Another point is that keras-vis used very little of my GPU, so when no GPU is available, keras-vis is much quicker. 
+ I tried it a few more times with different parameters with both environments, and if we judge by image quality, Matlab won this round.
+ <br>
+ I also checked timing. It took keras less than 20s to process an image with 200 iterations. With Matlab it is hard to compare as larger pyramid levels take more time. When I run
+ 1 pyramid level with 200 iterations it also take less than 20s, but even with 100 iterations I get nicer images than keras in half the time. 
+ Note however that keras-vis offers other important tools such as saliency maps, which Matlab still doesn't offer. 
  Matlab is not the best option now for deep-learning for a few reasons, 
- perhaps mainly because it is not free and because options are still limited. 
- 
-However, it seems that someone there is working hard to close the gap. I hope they do. If you want to use the most popular pretrained nets, 
+ perhaps mainly because it is not free and because options are still limited. You can't just move your model to Matlab because import from keras is buggy, and if you build a net from scratch you have to train it. you cannot load weights you trained on keras.
+ (there is a workaround to this).  However, it seems that someone there is working hard to close the gap. I hope they do. If you want to use the most popular pretrained nets, 
 or the most common net types (such as Faster R-CNN) then Matlab has its advantages - fewer lines of code, and you don't have to straggle half a day to install modules. 
-As for how machines see the world - I think it sees birds and snakes similarly to humans, recognize feathers and beaks. Perhaps 
+<br>
+As for how machines see the world - I think they see birds and snakes similarly to humans, recognize feathers and beaks. Perhaps 
 for CNN it doesn't matter so much how the beak connects to the feathers as long as you have all the features in the image. 
 In any case, if the class of a bird in your trained network looks nothing like a bird, or bird parts at least, you have to rise an eyebrow and see whether the net can really detect them.  
 We should also remember that VGG16 has to be sensitive for different kinds of birds and different categories altogether, 
