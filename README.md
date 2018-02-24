@@ -2,6 +2,7 @@
 Hi. I am a renegade Psychologist turned all purpose geek. My day job is brain research but by night I play with Convolutional Neural Networks. Here I post insights I get along the way. At this point you will not see here breakthroughs or innovation, only a user's perspective on how artificial neural networks work, in oppose to actual neural networks do (presuming you have some of those inside the skull, written in python or not). One post so far:
 
 [Visualizing nodes of a network, Keras vs Matlab](https://yuval-harpaz.github.io/cnn-with-Matlab/visualizeKeras/visiontools1.html)
+[finding bird features in VGG16](https://yuval-harpaz.github.io/cnn-with-Matlab/findBeakyNodes/findBirdFeatures.html)
 
 ### Support or Contact
 

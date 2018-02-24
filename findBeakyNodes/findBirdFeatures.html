@@ -1,0 +1,386 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Localizing nodes for feathers and beaks</title><meta name="generator" content="Bluefish 2.2.7" ><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-24"><meta name="DC.source" content="findBirdFeatures.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:20px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:3em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.25em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Localizing nodes for feathers and beaks</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Load net and imagine water ouzel</a></li><li><a href="#3">Find which nodes in previous layer are important</a></li><li><a href="#4">What can we tell about fc7?</a></li><li><a href="#5">Go further with beaks, mid right filter (node 478)</a></li><li><a href="#6">What can we tell about fc6?</a></li><li><a href="#7">Go further with beaks down to convolutional layers (node 486)</a></li><li><a href="#8">So what have we learned so far?</a></li><li><a href="#9">Visualize all 512 layers</a></li></ul></div><h2 id="1">Introduction</h2><p>The idea of this script is to start with a class of one bird, the one nesting in the 21st node of VGG16 output layer, and try trace back where the beak and feathers are identified. The approach is to check recursively which nodes in previous layers contribute most to the current layer. So potentially we could analyse the net and say, beaks of water ouzel are detected in node so and so.</p><h2 id="2">Load net and imagine water ouzel</h2><p>Here we want to see feathers and beaks, maybe also a whole bird.</p><pre class="codeinput">net=vgg16;
+I=deepDreamImage(net,39,21,<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30);
+I=deprocessImage(I);
+figure;
+imshow(I);
+</pre><pre class="codeoutput">|============================================|
+|    Pyramid   |  Iteration   |  Activation  |
+|     Level    |              |   Strength   |
+|============================================|
+|            1 |            1 |         1.38 |
+|            1 |            2 |         0.38 |
+|            1 |            3 |         6.27 |
+|            1 |            4 |        12.30 |
+|            1 |            5 |        21.03 |
+    
+|            3 |           25 |       317.72 |
+|            3 |           26 |       306.89 |
+|            3 |           27 |       326.14 |
+|            3 |           28 |       349.04 |
+|            3 |           29 |       333.61 |
+|            3 |           30 |       329.32 |
+|============================================|
+</pre><img vspace="5" hspace="5" src="findBirdFeatures_01.png" alt=""> <h2 id="3">Find which nodes in previous layer are important</h2><p>we have 1000 by 4096 weights to pass from fc7 layer to fc8, so the ones we are interested in are the 21st row. We want to check the idea that high weights imply that the corresponding nodes below are important. So we look for the top weights in layer 39 and visualize these nodes in the layer below (36). For comparison we also visualize minima nodes.</p><pre class="codeinput">layer=39; <span class="comment">% fc8</span>
+layerBelow=36; <span class="comment">% fc7</span>
+Nfilters=9; <span class="comment">%Number of nodes to visualize</span>
+[~,order]=sort(net.Layers(layer).Weights(21,:));
+mini=order(1:Nfilters); <span class="comment">% minima weights</span>
+maxi=order(end-Nfilters+1:end); <span class="comment">% maxima weights</span>
+disp([<span class="string">'high weight filters:'</span>,sprintf(<span class="string">'\n%d %d %d'</span>,maxi)])
+fprintf(<span class="string">'\n'</span>)
+disp([<span class="string">'low weight filters:'</span>,sprintf(<span class="string">'\n%d %d %d'</span>,mini)])
+top=uint8(zeros(438,438,3,9));
+bottom=top;
+<span class="keyword">for</span> filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30,<span class="string">'verbose'</span>,false);
+    top(:,:,:,filti)=deprocessImage(I);
+    I=deepDreamImage(net,layerBelow,mini(filti),<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30,<span class="string">'verbose'</span>,false);
+    bottom(:,:,:,filti)=deprocessImage(I);
+<span class="keyword">end</span>
+figure;
+subplot(1,2,1)
+montage(top)
+title(<span class="string">'Highest weights for layer fc8'</span>)
+subplot(1,2,2)
+montage(bottom)
+title(<span class="string">'Lowest weights for layer fc8'</span>)
+</pre><pre class="codeoutput">high weight filters:
+2771 2143 2385
+923 2579 478
+562 1188 1663
+
+low weight filters:
+2078 1676 2845
+767 1540 269
+2310 1865 3457
+</pre><img vspace="5" hspace="5" src="findBirdFeatures_02.png" alt=""> <h2 id="4">What can we tell about fc7?</h2><p>While fc8 layer gives us classes like "Water Ouzel", fc7 has parts of classes. Nodes with high weight for Ouzel capture eyes, feathers and maybe beak. There are definitely lots of feathers. I would dare say there are even wings, with different feather arrangement (e.g. node 2385, top right). I think I see beak in layer 478. I expect more beaky nodes to lay lower than the top 9 we visualized, but for what we are trying to achieve, let's continue with node 478. P.S,  did you notice the feathers in the low weights node 2310? May belong to another bird.</p><h2 id="5">Go further with beaks, mid right filter (node 478)</h2><p>So what are the nodes in layer fc6 that are most important for nnode 478 in layer fc7? Let's visualize the 9 nodes with max weight.</p><pre class="codeinput">layer=36;
+layerBelow=33; <span class="comment">% 'fc6'</span>
+filter=478;
+[~,order]=sort(net.Layers(layer).Weights(filter,:));
+maxi=order(end-Nfilters+1:end);
+disp([<span class="string">'chosen filters:'</span>,sprintf(<span class="string">'\n%d %d %d'</span>,maxi)])
+top=uint8(zeros(438,438,3,9));
+<span class="keyword">for</span> filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30,<span class="string">'verbose'</span>,false);
+    top(:,:,:,filti)=deprocessImage(I);
+<span class="keyword">end</span>
+figure;
+montage(top)
+</pre><pre class="codeoutput">chosen filters:
+486 744 1340
+266 1669 3483
+2866 279 604
+Warning: Image is too big to fit on screen; displaying at 67% 
+</pre><img vspace="5" hspace="5" src="findBirdFeatures_03.png" alt=""> <h2 id="6">What can we tell about fc6?</h2><p>We should expect further riduction in filter complexity. While node 478 of fc7 seems to percieve both beaks and eyes, contributing nodes might be sensitive to one of them. To some degree this seems to be true when we look at the above visualization. About half of the 9 nodes respond to eyes, and I think node 486 (top left) responds to beaks. But look at bottom right node (604), there I see almost a complete bird, wigs, beak, perhapse with no eye. But we must cotinue with one node to go further down to the last convolutional layer, conv5_3. As we started this quest with beaks, let it be node 486.</p><h2 id="7">Go further with beaks down to convolutional layers (node 486)</h2><p>We had it easy fith fully connected layers, since there was one weight connecting one node in current layer to one in the layer below. But look here: we have 4096 nodes in fc6 and 512 filters in node conv5_3, but instead of having a set of 4096 by 512 weights we have 4096 by 25088. This has to do with  the fact that each filter is a 7 by 7 matrix (after maxpooling). Layer fc6, instead of collecting information from whole filters 512 in number, collects information from every grid point of the filters. So what to do now? We cannot visualize top weight filters. Maximum weight for node 486 is for 15442 index. This falls somewhere inside filter 316 <a href="cumputed">by ceil(15442/49)</a>. So we can visualize the filters within which the highest weights were. Alternatively, we can visualize the filters that on average gave the highest set of 49 weights. Or should we average positive weights only to consider the ReLU? First thing's first, filters with peak weights (no averaging).</p><pre class="codeinput">layer=33;
+layerBelow=30; <span class="comment">% 'conv5_3'</span>
+filter=486;
+[~,order]=sort(net.Layers(layer).Weights(filter,:));
+maxi=ceil(order/49);
+<span class="comment">% Here we have overlap, four of the nine highest weights fall within filter</span>
+<span class="comment">% 362, so we choose the unique top 9 filters with a loop.</span>
+choice=[];
+<span class="keyword">while</span> length(choice)&lt;9
+    choice=[choice,maxi(end)];
+    maxi(end)=[];
+    choice=unique(choice);
+<span class="keyword">end</span>
+disp([<span class="string">'chosen filters:'</span>,sprintf(<span class="string">'\n%d %d %d'</span>,choice)])
+<span class="comment">% no visualizing our choice of 9 filters</span>
+top=uint8(zeros(383,383,3,9));
+<span class="keyword">for</span> filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,choice(filti),<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30,<span class="string">'verbose'</span>,false);
+    top(:,:,:,filti)=deprocessImage(I);
+<span class="keyword">end</span>
+figure;
+montage(top)
+title(<span class="string">'filters with top activity'</span>)
+<span class="comment">% Now average filter weights</span>
+w=reshape(net.Layers(layer).Weights(filter,:),[7,7,512]);
+avg=squeeze(mean(mean(w)));
+[~,order]=sort(avg);
+maxi=order(end-Nfilters+1:end);
+disp([<span class="string">'chosen filters:'</span>,sprintf(<span class="string">'\n%d %d %d'</span>,maxi)])
+top=uint8(zeros(383,383,3,9));
+<span class="keyword">for</span> filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30,<span class="string">'verbose'</span>,false);
+    top(:,:,:,filti)=deprocessImage(I);
+<span class="keyword">end</span>
+figure;
+montage(top)
+title(<span class="string">'filters with maximum average weights'</span>)
+<span class="comment">% Now lets sum only non negative weights</span>
+w(w&lt;=0)=nan;
+posSum=squeeze(nansum(nansum(w)));
+[~,order]=sort(avg);
+maxi=order(end-Nfilters+1:end);
+disp([<span class="string">'chosen filters:'</span>,sprintf(<span class="string">'\n%d %d %d'</span>,maxi)])
+top=uint8(zeros(383,383,3,9));
+<span class="keyword">for</span> filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),<span class="string">'PyramidLevels'</span>,3,<span class="string">'NumIterations'</span>,30,<span class="string">'verbose'</span>,false);
+    top(:,:,:,filti)=deprocessImage(I);
+<span class="keyword">end</span>
+figure;
+montage(top)
+title(<span class="string">'filters with maximum sum of positive weights'</span>)
+</pre><pre class="codeoutput">
+chosen filters:
+102 156 198
+255 316 318
+322 362 502
+<img vspace="5" hspace="5" src="findBirdFeatures_04.png" alt=""> 
+
+chosen filters:
+246 286 257
+198 318 60
+354 102 362
+<img vspace="5" hspace="5" src="findBirdFeatures_05.png" alt="">
+</pre>
+<br>
+Four nodes in the above images are in common. and I can't tell which approach is better. I can also not say if a certain filter is really related to a beak. Maybe a beak is the sum of these features but I think we did not get to the bottom of it. And the feathers are here again (node 502). Although this is no beak, this is interesting, because we see a relatively complex pattern here, while other nodes seem to capture simpler features. 
+ <h2 id="8">So what have we learned so far?</h2><p>I am not so sure. We have a challenge when going down from fully connected to convolutional layers,
+ but we chose beaks, which are hard, or at least less represented than feathers in the top weights we explored. I guess we have to keep on digging, looking for beaks in other branches, and also to try this approach with other bird features.</p><h2 id="9">Visualize all 512 layers</h2><pre class="codeinput"><span class="comment">%top=uint8(zeros(196,196,3,512));</span>
+<span class="keyword">for</span> filti=1:512
+    <span class="comment">%I=deepDreamImage(net,layerBelow,filti,'PyramidLevels',1,'NumIterations',30,'verbose',false);</span>
+    <span class="comment">%top(:,:,:,filti)=deprocessImage(I);</span>
+<span class="keyword">end</span>
+figure;
+montage(top)
+</pre>
+<img vspace="5" hspace="5" src="findBirdFeatures_07.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Localizing nodes for feathers and beaks
+%% Introduction
+% The idea of this script is to start with a class of one bird, the one
+% nesting in the 21st node of VGG16 output layer, and try trace back where
+% the beak and feathers are identified. The approach is to check
+% recursively which nodes in previous layers contribute most to the current
+% layer. So potentially we could analyse the net and say, beaks of water
+% ouzel are detected in node so and so.
+%% Load net and imagine water ouzel
+% Here we want to see feathers and beaks, maybe also a whole bird.
+net=vgg16;
+I=deepDreamImage(net,39,21,'PyramidLevels',3,'NumIterations',30);
+I=deprocessImage(I);
+figure;
+imshow(I);
+%% Find which nodes in previous layer are important
+% we have 1000 by 4096 weights to pass from fc7 layer to fc8, so the ones
+% we are interested in are the 21st row. We want to check the idea that
+% high weights imply that the corresponding nodes below are important. So
+% we look for the top weights in layer 39 and visualize these nodes in the
+% layer below (36). For comparison we also visualize minima nodes.
+layer=39; % fc8
+layerBelow=36; % fc7
+Nfilters=9; %Number of nodes to visualize
+[~,order]=sort(net.Layers(layer).Weights(21,:));
+mini=order(1:Nfilters); % minima weights
+maxi=order(end-Nfilters+1:end); % maxima weights
+disp(['high weight filters:',sprintf('\n%d %d %d',maxi)])
+fprintf('\n')
+disp(['low weight filters:',sprintf('\n%d %d %d',mini)])
+top=uint8(zeros(438,438,3,9));
+bottom=top;
+for filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),'PyramidLevels',3,'NumIterations',30,'verbose',false);
+    top(:,:,:,filti)=deprocessImage(I);
+    I=deepDreamImage(net,layerBelow,mini(filti),'PyramidLevels',3,'NumIterations',30,'verbose',false);
+    bottom(:,:,:,filti)=deprocessImage(I);
+end
+figure;
+subplot(1,2,1)
+montage(top)
+title('Highest weights for layer fc8')
+subplot(1,2,2)
+montage(bottom)
+title('Lowest weights for layer fc8')
+%% What can we tell about fc7?
+% While fc8 layer gives us classes like "Water Ouzel", fc7 has parts of
+% classes. Nodes with high weight for Ouzel capture eyes, feathers and
+% maybe beak. There are definitely lots of feathers. I would dare say there
+% are even wings, with different feather arrangement (e.g. node 2385, top
+% right). I can't tell for sure, but node 2771 seem to me to be portraing
+% the general outline of the bird, with legs coming down from the middle of
+% an oval body. I think I see beak in layer 478. I expect more beaky
+% nodes to lay lower than the top 9 we visualized, but for what we are
+% trying to achieve, let's continue with node 478. P.S,  did you notice the
+% feathers in the low weights node 2310? May belong to another bird.
+%% Go further with beaks, mid right filter (node 478)
+% So what are the nodes in layer fc6 that are most important for nnode 478
+% in layer fc7? Let's visualize the 9 nodes with max weight.
+layer=36;
+layerBelow=33; % 'fc6'
+filter=478;
+[~,order]=sort(net.Layers(layer).Weights(filter,:));
+maxi=order(end-Nfilters+1:end);
+disp(['chosen filters:',sprintf('\n%d %d %d',maxi)])
+top=uint8(zeros(438,438,3,9));
+for filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),'PyramidLevels',3,'NumIterations',30,'verbose',false);
+    top(:,:,:,filti)=deprocessImage(I);
+end
+figure;
+montage(top)
+%% What can we tell about fc6?
+% We should expect further riduction in filter complexity. While node 478
+% of fc7 seems to percieve both beaks and eyes, contributing nodes might be
+% sensitive to one of them. To some degree this seems to be true when we
+% look at the above visualization. About half of the 9 nodes respond to
+% eyes, and I think node 486 (top left) responds to beaks. But look at
+% bottom right node (604), there I see almost a complete bird, wigs, beak,
+% perhapse with no eye. But we must cotinue with one node to go further
+% down to the last convolutional layer, conv5_3. As we started this quest 
+% with beaks, let it be node 486.  
+%% Go further with beaks down to convolutional layers (node 486)
+% We had it easy fith fully connected layers, since there was one weight
+% connecting one node in current layer to one in the layer below. But look
+% here: we have 4096 nodes in fc6 and 512 filters in node conv5_3, but
+% instead of having a set of 4096 by 512 weights we have 4096 by 25088.
+% This has to do with  the fact that each filter is a 7 by 7 matrix (after
+% maxpooling). Layer fc6, instead of collecting information from whole
+% filters 512 in number, collects information from every grid point of the
+% filters. So what to do now? We cannot visualize top weight filters.
+% Maximum weight for node 486 is for 15442 index. This falls somewhere
+% inside filter 316 <cumputed by ceil(15442/49)>. So we can visualize the
+% filters within which the highest weights were. Alternatively, we can
+% visualize the filters that on average gave the highest set of 49 weights.
+% Or should we average positive weights only to consider the ReLU? First
+% thing's first, filters with peak weights (no averaging).
+layer=33;
+layerBelow=30; % 'conv5_3'
+filter=486;
+[~,order]=sort(net.Layers(layer).Weights(filter,:));
+maxi=ceil(order/49);
+% Here we have overlap, four of the nine highest weights fall within filter
+% 362, so we choose the unique top 9 filters with a loop.
+choice=[];
+while length(choice)<9
+    choice=[choice,maxi(end)];
+    maxi(end)=[];
+    choice=unique(choice);
+end
+disp(['chosen filters:',sprintf('\n%d %d %d',choice)])
+% no visualizing our choice of 9 filters
+top=uint8(zeros(383,383,3,9));
+for filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,choice(filti),'PyramidLevels',3,'NumIterations',30,'verbose',false);
+    top(:,:,:,filti)=deprocessImage(I);
+    disp(filti)
+end
+figure;
+montage(top)
+title('filters with top activity')
+% Now average filter weights
+w=reshape(net.Layers(layer).Weights(filter,:),[7,7,512]);
+avg=squeeze(mean(mean(w)));
+[~,order]=sort(avg);
+maxi=order(end-Nfilters+1:end);
+disp(['chosen filters:',sprintf('\n%d %d %d',maxi)])
+top=uint8(zeros(383,383,3,9));
+for filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),'PyramidLevels',3,'NumIterations',30,'verbose',false);
+    top(:,:,:,filti)=deprocessImage(I);
+end
+figure;
+montage(top)
+title('filters with maximum average weights')
+% Now lets sum only non negative weights
+w(w<=0)=nan;
+posSum=squeeze(nansum(nansum(w)));
+[~,order]=sort(avg);
+maxi=order(end-Nfilters+1:end);
+disp(['chosen filters:',sprintf('\n%d %d %d',maxi)])
+top=uint8(zeros(383,383,3,9));
+for filti=1:Nfilters
+    I=deepDreamImage(net,layerBelow,maxi(filti),'PyramidLevels',3,'NumIterations',30,'verbose',false);
+    top(:,:,:,filti)=deprocessImage(I);
+end
+figure;
+montage(top)
+title('filters with maximum sum of positive weights')
+
+%% So what have we learned so far?
+% I am not so sure. We have a challange when going down from fully
+% connected to convolutional layers, but we chose beaks, which are hard, or
+% at least less represented than feathers in the top weights we explored.
+
+
+%% Visualize all 512 layers
+%top=uint8(zeros(196,196,3,512));
+for filti=1:512
+    %I=deepDreamImage(net,layerBelow,filti,'PyramidLevels',1,'NumIterations',30,'verbose',false);
+    %top(:,:,:,filti)=deprocessImage(I);
+end
+figure;
+montage(top)
+
+
+##### SOURCE END #####
+--></body></html>
